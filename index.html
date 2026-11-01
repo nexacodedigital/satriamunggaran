@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio WebApp | Satria Munggaran</title>
+    
+    <!-- Favicon Dinamis -->
+    <link id="app-favicon" rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" type="image/x-icon">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { poppins: ['Poppins', 'sans-serif'] },
+                    colors: {
+                        /* Diubah ke palet Biru Muda (Sky Blue) yang cerah dan segar */
+                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e' },
+                        cyan: { 400: '#22d3ee', 500: '#06b6d4' }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'float': 'float 4s ease-in-out infinite',
+                        'float-delayed': 'float 5s ease-in-out infinite 2s',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #f0f9ff; }
+        .bg-widget, .header-widget, .sidebar, .footer-widget, .fauxcolumn-outer { display: none !important; }
+        #main-wrapper { width: 100% !important; max-width: 100% !important; padding: 0 !important; margin: 0 !important; border: none !important; }
+        
+        #app-container { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            z-index: 999999; overflow-y: auto; overflow-x: hidden;
+            background-color: #ffffff;
+            background-image: radial-gradient(#e0f2fe 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 8px 32px 0 rgba(2, 132, 199, 0.05);
+        }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #f0f9ff; }
+        ::-webkit-scrollbar-thumb { background: #bae6fd; border-radius: 5px; border: 2px solid #f0f9ff; }
+        ::-webkit-scrollbar-thumb:hover { background: #7dd3fc; }
+
+        .animate-on-scroll { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+        .img-hover-zoom { transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .group:hover .img-hover-zoom { transform: scale(1.1) rotate(2deg); }
+        
+        /* Utility khusus untuk Horizontal Scroll (Sembunyikan Scrollbar agar Estetik) */
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="font-poppins text-slate-900 antialiased selection:bg-brand-500 selection:text-white">
+
+    <div style="display:none;"><img src="https://images.unsplash.com/photo-1507238692062-8a0cb9c1415e?auto=format&fit=crop&w=1200&q=80" alt="Thumbnail"></div>
+
+    <script>
+        // UBAH IS_PREVIEW KE false JIKA SUDAH DI-DEPLOY
+        const IS_PREVIEW = false; 
+        
+        // MASUKKAN LINK DEPLOY (WEB APP URL) GAS ANDA YANG BARU DI SINI
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzCzSCd9SLdqh0nZBr5ZDZq87j5enWwr6YDCt1DsyIi28E-rzjuWLaJgIRFze2cpwFE/exec";
+    </script>
+
+    <!-- LOADING SCREEN DIHAPUS - DIGANTI BACKGROUND SYNC -->
+
+    <div id="app-container" class="opacity-0 transition-opacity duration-500">
+        
+        <!-- NAVBAR -->
+        <nav class="fixed w-full z-50 glass transition-all duration-300 border-b border-brand-100" id="navbar">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-20">
+                    <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="navigate('home')">
+                        <span class="text-2xl font-black tracking-tight text-slate-900">
+                            Satria Munggaran<span class="text-brand-500">.</span>
+                        </span>
+                    </div>
+                    
+                    <div class="hidden lg:flex space-x-8 items-center">
+                        <a href="#about" class="text-sm font-bold text-slate-600 hover:text-brand-600 transition-colors">About</a>
+                        <a href="#education" class="text-sm font-bold text-slate-600 hover:text-brand-600 transition-colors">Education</a>
+                        <a href="#experience" class="text-sm font-bold text-slate-600 hover:text-brand-600 transition-colors">Experience</a>
+                        <a href="#skills" class="text-sm font-bold text-slate-600 hover:text-brand-600 transition-colors">Skills</a>
+                        <a href="#projects" class="text-sm font-bold text-slate-600 hover:text-brand-600 transition-colors">Portfolio</a>
+                        <a href="#gallery" class="text-sm font-bold text-slate-600 hover:text-brand-600 transition-colors">Gallery</a>
+                        <a href="#contact" class="px-6 py-2.5 bg-gradient-to-r from-brand-500 to-cyan-400 hover:from-brand-600 hover:to-cyan-500 text-white rounded-full text-sm font-bold shadow-md shadow-brand-500/30 transition transform hover:-translate-y-1">
+                            Let's Work!
+                        </a>
+                    </div>
+
+                    <div class="lg:hidden flex items-center">
+                        <button onclick="toggleMobileMenu()" class="text-brand-600 hover:text-brand-800 focus:outline-none">
+                            <i class="fas fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="mobile-menu" class="hidden lg:hidden glass border-t border-brand-100 absolute w-full shadow-2xl">
+                <div class="px-4 pt-2 pb-6 space-y-2">
+                    <a href="#about" class="block px-3 py-3 rounded-xl text-base font-bold text-slate-700 hover:bg-brand-50 hover:text-brand-600">About</a>
+                    <a href="#education" class="block px-3 py-3 rounded-xl text-base font-bold text-slate-700 hover:bg-brand-50 hover:text-brand-600">Education</a>
+                    <a href="#experience" class="block px-3 py-3 rounded-xl text-base font-bold text-slate-700 hover:bg-brand-50 hover:text-brand-600">Experience</a>
+                    <a href="#skills" class="block px-3 py-3 rounded-xl text-base font-bold text-slate-700 hover:bg-brand-50 hover:text-brand-600">Skills</a>
+                    <a href="#projects" class="block px-3 py-3 rounded-xl text-base font-bold text-slate-700 hover:bg-brand-50 hover:text-brand-600">Portfolio</a>
+                    <a href="#gallery" class="block px-3 py-3 rounded-xl text-base font-bold text-slate-700 hover:bg-brand-50 hover:text-brand-600">Gallery</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- VIEW 1: PORTFOLIO UTAMA -->
+        <main id="view-portfolio">
+            
+            <section id="home" class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-b from-white to-brand-50">
+                <!-- Background Blobs Lebih Cerah -->
+                <div class="absolute top-10 left-10 w-96 h-96 bg-cyan-100 rounded-full mix-blend-multiply filter blur-3xl opacity-80 animate-blob"></div>
+                <div class="absolute top-0 right-20 w-96 h-96 bg-brand-100 rounded-full mix-blend-multiply filter blur-3xl opacity-80 animate-blob animation-delay-2000"></div>
+                
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="flex flex-col lg:flex-row items-center gap-16">
+                        <div class="w-full lg:w-3/5 text-center lg:text-left">
+                            <div class="inline-block px-5 py-2 rounded-full bg-white border border-brand-200 text-brand-600 font-bold text-sm tracking-wide mb-6 animate-on-scroll shadow-sm">
+                                🎉 Welcome to my creative space
+                            </div>
+                            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-tight mb-6 animate-on-scroll" id="hero-title">
+                                Hello, I'm Satria!<br>
+                                <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-500 to-cyan-400">Teaching Enthusiast | Social & HR Passionate | Creative Digital Talent</span>
+                            </h1>
+                            <p class="text-lg lg:text-xl text-slate-700 mb-10 max-w-2xl mx-auto lg:mx-0 animate-on-scroll font-medium leading-relaxed" id="hero-desc">
+                                Membangun ide menjadi pengalaman digital yang memukau. Saya siap membantu Anda menciptakan dampak positif melalui inovasi, desain, dan komunikasi.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-on-scroll">
+                                <a href="#projects" class="px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-bold shadow-xl shadow-brand-500/30 transition transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                                    <i class="fas fa-briefcase"></i> Lihat Portofolio
+                                </a>
+                                <a href="#contact" class="px-8 py-4 bg-white text-brand-600 border-2 border-brand-100 rounded-xl font-bold shadow-md hover:border-brand-500 hover:text-brand-600 transition transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                                    <i class="fab fa-whatsapp text-green-500 text-xl"></i> Hubungi via WA
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full lg:w-2/5 flex justify-center animate-on-scroll">
+                            <div class="relative w-80 h-80 lg:w-[450px] lg:h-[450px]">
+                                <div class="absolute inset-0 bg-gradient-to-tr from-brand-300 to-cyan-200 rounded-[3rem] rotate-6 opacity-80 animate-float-delayed"></div>
+                                <img id="hero-img" fetchpriority="high" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80" class="relative z-10 w-full h-full object-cover object-top rounded-[3rem] border-8 border-white shadow-2xl animate-float" style="image-rendering: -webkit-optimize-contrast;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="about" class="py-24 bg-white relative">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col lg:flex-row gap-16 items-center">
+                        <div class="w-full lg:w-1/2 animate-on-scroll">
+                            <div class="relative rounded-[2rem] overflow-hidden shadow-2xl group border border-brand-50">
+                                <img id="about-img" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" class="w-full h-auto img-hover-zoom">
+                                <div class="absolute inset-0 bg-gradient-to-t from-brand-900/90 via-brand-900/30 to-transparent flex flex-col justify-end p-10">
+                                    <div class="w-16 h-1 bg-cyan-400 mb-4 rounded-full"></div>
+                                    <h4 id="about-quote" class="text-white text-2xl font-bold leading-snug">"Kolaborasi adalah kunci dari setiap kesuksesan digital."</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full lg:w-1/2 animate-on-scroll">
+                            <h2 class="text-brand-500 font-black tracking-widest uppercase mb-2">Tentang Saya</h2>
+                            <h3 class="text-4xl font-black text-slate-900 mb-6">Inovatif, Adaptif & Berdedikasi.</h3>
+                            <div id="about-desc" class="text-lg text-slate-700 mb-10 leading-relaxed space-y-4 font-medium">
+                                <!-- Dynamic content -->
+                            </div>
+                            
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="stats-container">
+                                <!-- Dynamic Stats -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="education" class="py-24 bg-brand-50/50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16 animate-on-scroll">
+                        <h2 class="text-brand-500 font-black tracking-widest uppercase mb-2">Pendidikan</h2>
+                        <h3 class="text-4xl font-black text-slate-900">Riwayat Akademik & Aktivitas</h3>
+                    </div>
+                    <div class="space-y-8" id="education-container"></div>
+                </div>
+            </section>
+
+            <section id="experience" class="py-24 bg-white relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-1/3 h-full bg-cyan-50 rounded-l-[100px] opacity-60"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="text-center mb-16 animate-on-scroll">
+                        <h2 class="text-brand-500 font-black tracking-widest uppercase mb-2">Perjalanan Karir</h2>
+                        <h3 class="text-4xl font-black text-slate-900">Pengalaman & Pencapaian</h3>
+                    </div>
+                    
+                    <!-- Wrapper Carousel dengan efek Hover Group -->
+                    <div class="relative group">
+                        
+                        <!-- Tombol Kiri (Melayang di Tengah Vertikal) -->
+                        <button onclick="scrollDiv('experience-container', -1)" class="hidden md:flex absolute -left-6 top-[45%] -translate-y-1/2 w-14 h-14 rounded-full bg-white border border-brand-100 text-brand-500 items-center justify-center hover:bg-brand-500 hover:text-white transition-all duration-300 shadow-2xl z-20 opacity-0 group-hover:opacity-100 focus:outline-none transform hover:scale-110">
+                            <i class="fas fa-chevron-left text-xl pr-1"></i>
+                        </button>
+
+                        <!-- PERBAIKAN: Container Flex Horizontal Scroll -->
+                        <div class="flex overflow-x-auto snap-x snap-mandatory gap-6 md:gap-8 pb-12 hide-scrollbar px-4 -mx-4 sm:px-0 sm:mx-0 scroll-smooth" id="experience-container"></div>
+                        
+                        <!-- Tombol Kanan (Melayang di Tengah Vertikal) -->
+                        <button onclick="scrollDiv('experience-container', 1)" class="hidden md:flex absolute -right-6 top-[45%] -translate-y-1/2 w-14 h-14 rounded-full bg-white border border-brand-100 text-brand-500 items-center justify-center hover:bg-brand-500 hover:text-white transition-all duration-300 shadow-2xl z-20 opacity-0 group-hover:opacity-100 focus:outline-none transform hover:scale-110">
+                            <i class="fas fa-chevron-right text-xl pl-1"></i>
+                        </button>
+
+                    </div>
+                </div>
+            </section>
+
+            <section id="skills" class="py-24 bg-slate-900 text-white relative overflow-hidden">
+                <div class="absolute inset-0 bg-brand-900 opacity-20"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="text-center mb-16 animate-on-scroll">
+                        <h2 class="text-cyan-400 font-black tracking-widest uppercase mb-2">Keahlian Utama</h2>
+                        <h3 class="text-4xl font-black text-white">Skill & Portofolio Pendukung</h3>
+                    </div>
+                    
+                    <!-- PERBAIKAN: Wrapper Carousel Skill dengan Tombol Navigasi Manual -->
+                    <div class="relative group">
+                        
+                        <!-- Tombol Kiri (Muncul Saat Hover di Laptop) -->
+                        <button onclick="scrollDiv('skills-container', -1)" class="hidden md:flex absolute -left-6 top-[45%] -translate-y-1/2 w-14 h-14 rounded-full bg-slate-800 border border-slate-600 text-cyan-400 items-center justify-center hover:bg-cyan-500 hover:text-white hover:border-cyan-500 transition-all duration-300 shadow-2xl z-20 opacity-0 group-hover:opacity-100 focus:outline-none transform hover:scale-110">
+                            <i class="fas fa-chevron-left text-xl pr-1"></i>
+                        </button>
+
+                        <!-- Container Flex Horizontal (Agar jalan ke samping) -->
+                        <div class="flex overflow-x-auto gap-6 md:gap-8 pb-12 hide-scrollbar px-4 -mx-4 sm:px-0 sm:mx-0" id="skills-container" style="scroll-behavior: auto;"></div>
+                        
+                        <!-- Tombol Kanan (Muncul Saat Hover di Laptop) -->
+                        <button onclick="scrollDiv('skills-container', 1)" class="hidden md:flex absolute -right-6 top-[45%] -translate-y-1/2 w-14 h-14 rounded-full bg-slate-800 border border-slate-600 text-cyan-400 items-center justify-center hover:bg-cyan-500 hover:text-white hover:border-cyan-500 transition-all duration-300 shadow-2xl z-20 opacity-0 group-hover:opacity-100 focus:outline-none transform hover:scale-110">
+                            <i class="fas fa-chevron-right text-xl pl-1"></i>
+                        </button>
+
+                    </div>
+                </div>
+            </section>
+
+            <section id="projects" class="py-24 bg-brand-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12 animate-on-scroll">
+                        <h2 class="text-brand-500 font-black tracking-widest uppercase mb-2">Karya Terbaik</h2>
+                        <h3 class="text-4xl font-black text-slate-900">Featured Projects</h3>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-3 mb-12 animate-on-scroll">
+                        <button class="filter-btn active px-8 py-3 rounded-full text-sm font-bold bg-brand-500 text-white shadow-lg shadow-brand-500/30 transition transform hover:-translate-y-1" data-filter="all">Semua Project</button>
+                        <button class="filter-btn px-8 py-3 rounded-full text-sm font-bold bg-white text-slate-700 hover:bg-brand-100 hover:text-brand-600 transition shadow-sm border border-slate-200" data-filter="web">Web & Apps</button>
+                        <button class="filter-btn px-8 py-3 rounded-full text-sm font-bold bg-white text-slate-700 hover:bg-brand-100 hover:text-brand-600 transition shadow-sm border border-slate-200" data-filter="design">Design</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-container"></div>
+                </div>
+            </section>
+
+            <!-- AWARDS -->
+            <section id="achievements" class="py-24 bg-white border-t border-brand-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col md:flex-row justify-between items-end mb-16 animate-on-scroll">
+                        <div>
+                            <h2 class="text-brand-500 font-black tracking-widest uppercase mb-2">Penghargaan</h2>
+                            <h3 class="text-4xl font-black text-slate-900">Achievement & Certificate</h3>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="certificates-container"></div>
+                </div>
+            </section>
+
+            <!-- LAMPIRAN FOTO / GALLERY (SECTION BARU) -->
+            <section id="gallery" class="py-24 bg-brand-50/50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16 animate-on-scroll">
+                        <h2 class="text-brand-500 font-black tracking-widest uppercase mb-2">Galeri Kegiatan</h2>
+                        <h3 class="text-4xl font-black text-slate-900">Lampiran Momen & Aktivitas</h3>
+                        <p class="text-slate-600 mt-3 font-medium">Dokumentasi nyata di balik dedikasi dan karya-karya saya.</p>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="gallery-container"></div>
+                </div>
+            </section>
+
+            <!-- TESTIMONIALS -->
+            <section class="py-24 bg-brand-500 text-white relative overflow-hidden">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="text-center mb-16 animate-on-scroll">
+                        <h2 class="text-cyan-200 font-black tracking-widest uppercase mb-2">Ulasan Client</h2>
+                        <h3 class="text-4xl font-black text-white">Apa Kata Mereka?</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="testimonials-container"></div>
+                </div>
+            </section>
+
+            <!-- CONTACT WHATSAPP -->
+            <section id="contact" class="py-24 bg-white relative">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="glass border border-brand-100 rounded-[2rem] p-8 md:p-16 shadow-2xl bg-white/70">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                            
+                            <div class="animate-on-scroll">
+                                <h2 class="text-5xl font-black text-slate-900 mb-6">Let's Work <br><span class="text-brand-500">Together!</span> 🚀</h2>
+                                <p class="text-slate-700 mb-10 text-lg leading-relaxed font-medium">
+                                    Punya ide proyek menarik atau peluang karir? Hubungi saya langsung, pesan Anda akan diteruskan otomatis ke WhatsApp saya.
+                                </p>
+                                
+                                <div class="space-y-6 bg-brand-50 p-6 rounded-2xl border border-brand-100">
+                                    <div class="flex items-center gap-5">
+                                        <div class="w-14 h-14 bg-white shadow-sm rounded-full flex items-center justify-center text-brand-500 text-2xl border border-brand-100">
+                                            <i class="fas fa-envelope"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-slate-500 font-bold uppercase tracking-wider">Email</p>
+                                            <p class="text-slate-900 font-black text-lg" id="c-email-disp">hello@email.com</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-5">
+                                        <div class="w-14 h-14 bg-white shadow-sm rounded-full flex items-center justify-center text-green-500 text-2xl border border-brand-100">
+                                            <i class="fab fa-whatsapp"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-slate-500 font-bold uppercase tracking-wider">WhatsApp</p>
+                                            <p class="text-slate-900 font-black text-lg" id="c-wa-disp">+62 812 3456</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-10">
+                                    <p class="text-sm text-slate-500 font-bold uppercase tracking-wider mb-4">Connect with me</p>
+                                    <div class="flex gap-4">
+                                        <a href="#" id="link-linkedin" target="_blank" class="w-14 h-14 rounded-full bg-white flex items-center justify-center text-[#0A66C2] hover:bg-[#0A66C2] hover:text-white transition-all shadow-md text-2xl border border-slate-200"><i class="fab fa-linkedin-in"></i></a>
+                                        <a href="#" id="link-instagram" target="_blank" class="w-14 h-14 rounded-full bg-white flex items-center justify-center text-[#E4405F] hover:bg-[#E4405F] hover:text-white transition-all shadow-md text-2xl border border-slate-200"><i class="fab fa-instagram"></i></a>
+                                        <a href="#" id="link-youtube" target="_blank" class="w-14 h-14 rounded-full bg-white flex items-center justify-center text-[#FF0000] hover:bg-[#FF0000] hover:text-white transition-all shadow-md text-2xl border border-slate-200"><i class="fab fa-youtube"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="animate-on-scroll">
+                                <form id="waForm" onsubmit="handleWAContact(event)" class="bg-white p-8 rounded-3xl shadow-xl border border-brand-100">
+                                    <h3 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
+                                        <i class="fab fa-whatsapp text-green-500 text-3xl"></i> Chat via WhatsApp
+                                    </h3>
+                                    <div class="space-y-5">
+                                        <div>
+                                            <label class="block text-sm font-bold text-slate-700 mb-2">Nama Anda</label>
+                                            <input type="text" id="wa_name" required class="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none font-medium">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-bold text-slate-700 mb-2">Pesan/Keperluan</label>
+                                            <textarea id="wa_message" rows="4" required class="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none font-medium resize-none"></textarea>
+                                        </div>
+                                        <button type="submit" class="w-full py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold shadow-lg shadow-green-500/30 transition transform hover:-translate-y-1 flex justify-center items-center text-lg mt-2">
+                                            Kirim ke WhatsApp <i class="fas fa-paper-plane ml-3"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="bg-slate-900 py-12">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <div class="border-t border-slate-800 pt-8">
+                        <p class="text-slate-400 font-medium">© 2026 by satria munggaran. All rights reserved.</p>
+                        <button onclick="showLogin()" class="mt-8 text-slate-700 hover:text-brand-400 transition text-xs flex items-center justify-center mx-auto opacity-40 hover:opacity-100 font-bold">
+                            <i class="fas fa-lock mr-2"></i> Akses Portal Admin
+                        </button>
+                    </div>
+                </div>
+            </footer>
+        </main>
+
+        <!-- VIEW LOGIN -->
+        <main id="view-login" class="hidden min-h-screen flex items-center justify-center py-20 px-4 bg-brand-50">
+            <div class="max-w-md w-full bg-white p-10 rounded-[2rem] shadow-2xl border border-brand-100 relative">
+                <button onclick="navigate('home')" class="absolute top-6 right-6 text-slate-400 hover:text-brand-600 bg-brand-50 w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-times"></i></button>
+                <div class="text-center mb-10">
+                    <div class="w-20 h-20 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-6"><i class="fas fa-shield-alt text-brand-600 text-3xl"></i></div>
+                    <h2 class="text-3xl font-black text-slate-900">CMS Portal</h2>
+                    <p class="text-slate-500 mt-2 font-medium">Login untuk mengedit website.</p>
+                </div>
+                
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="space-y-6">
+                        <div>
+                            <div class="relative">
+                                <i class="fas fa-user absolute left-4 top-4 text-slate-400"></i>
+                                <input type="text" id="l_user" placeholder="Username" required class="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none font-medium">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="relative">
+                                <i class="fas fa-key absolute left-4 top-4 text-slate-400"></i>
+                                <input type="password" id="l_pass" placeholder="Password" required class="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none font-medium">
+                            </div>
+                        </div>
+                        <button type="submit" id="btnLogin" class="w-full py-4 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-bold shadow-lg transition flex justify-center items-center text-lg mt-4">
+                            Login <i class="fas fa-sign-in-alt ml-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <!-- VIEW ADMIN CMS -->
+        <main id="view-admin" class="hidden min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-brand-50">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm border border-brand-100">
+                    <div>
+                        <h2 class="text-3xl font-black text-slate-900">Admin CMS Panel</h2>
+                        <p class="text-slate-600 font-medium">Edit seluruh konten website secara dinamis.</p>
+                    </div>
+                    <button onclick="handleLogout()" class="px-5 py-2.5 bg-red-50 text-red-600 hover:bg-red-500 hover:text-white rounded-xl font-bold transition border border-red-100">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                    </button>
+                </div>
+
+                <!-- Admin Tabs -->
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <button onclick="switchAdminTab('tab-profile')" id="btn-tab-profile" class="px-6 py-3 bg-brand-500 text-white font-bold rounded-xl shadow-md transition"><i class="fas fa-user-edit mr-2"></i>Profil & Teks</button>
+                    <button onclick="switchAdminTab('tab-database')" id="btn-tab-database" class="px-6 py-3 bg-white text-slate-700 font-bold rounded-xl shadow-sm border border-brand-100 hover:bg-brand-50 transition"><i class="fas fa-database mr-2"></i>Portofolio</button>
+                    <button onclick="switchAdminTab('tab-security')" id="btn-tab-security" class="px-6 py-3 bg-white text-slate-700 font-bold rounded-xl shadow-sm border border-brand-100 hover:bg-brand-50 transition"><i class="fas fa-shield-alt mr-2"></i>Keamanan</button>
+                </div>
+
+                <!-- TAB 1: Profile Settings -->
+                <div id="tab-profile" class="bg-white p-8 rounded-3xl shadow-xl border border-brand-100 block">
+                    <h3 class="text-xl font-black text-slate-900 mb-6 border-b pb-4"><i class="fas fa-user-edit text-brand-500 mr-2"></i> Pengaturan Profil & Kontak</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <h4 class="font-bold text-brand-700 bg-brand-50 p-2 rounded border border-brand-100">Teks Hero & About</h4>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Nama / Title</label>
+                                <input type="text" id="set_heroTitle" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi Singkat (Hero)</label>
+                                <textarea id="set_heroDesc" rows="3" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 font-medium"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Teks About Me</label>
+                                <textarea id="set_aboutDesc" rows="4" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 font-medium"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">URL Foto Profil Hero</label>
+                                <input type="text" id="set_heroImg" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">URL Foto Tentang Saya (About)</label>
+                                <input type="text" id="set_aboutImg" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Kata Motivasi (Quote)</label>
+                                <textarea id="set_aboutQuote" rows="2" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 font-medium"></textarea>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <h4 class="font-bold text-brand-700 bg-brand-50 p-2 rounded border border-brand-100">Kontak, Sosmed & Ikon</h4>
+                            <div>
+                                <label class="block text-xs font-bold text-brand-600 mb-1">URL Favicon (Ikon Tab Atas)</label>
+                                <input type="text" id="set_faviconUrl" class="w-full p-3 border border-brand-200 rounded-xl bg-brand-50 font-medium focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Nomor WhatsApp (Cth: 62812...)</label>
+                                <input type="text" id="set_waNumber" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Alamat Email</label>
+                                <input type="text" id="set_email" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Link LinkedIn</label>
+                                <input type="text" id="set_linkedin" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Link Instagram</label>
+                                <input type="text" id="set_instagram" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Link YouTube</label>
+                                <input type="text" id="set_youtube" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 font-medium">
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="saveProfileSettings()" id="btnSaveProfile" class="mt-8 px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl shadow-lg w-full transition">
+                        Simpan Perubahan Profil <i class="fas fa-save ml-2"></i>
+                    </button>
+                </div>
+
+                <!-- TAB 2: Database Editor -->
+                <div id="tab-database" class="bg-white p-8 rounded-3xl shadow-xl border border-brand-100 hidden">
+                    <h3 class="text-xl font-black text-slate-900 mb-6 border-b pb-4"><i class="fas fa-database text-cyan-500 mr-2"></i> Editor Database Portfolio</h3>
+                    
+                    <div class="flex gap-4 mb-6 items-center bg-brand-50 p-4 rounded-xl border border-brand-100">
+                        <label class="font-bold text-brand-700">Pilih Tabel Data:</label>
+                        <select id="db-selector" onchange="loadTableEditor()" class="p-3 border border-brand-200 rounded-xl font-bold text-slate-700 bg-white outline-none focus:ring-2 focus:ring-brand-400 flex-1">
+                            <option value="">-- Pilih --</option>
+                            <option value="Education">Pendidikan (Education)</option>
+                            <option value="Experience">Pengalaman (Experience)</option>
+                            <option value="Skills">Keahlian (Skills)</option>
+                            <option value="Projects">Portfolio (Projects)</option>
+                            <option value="Certificates">Sertifikat (Certificates)</option>
+                            <option value="Gallery">Galeri Kegiatan (Gallery Lampiran)</option>
+                            <option value="Testimonials">Ulasan (Testimonials)</option>
+                            <option value="Stats">Statistik (Stats Angka)</option>
+                        </select>
+                    </div>
+
+                    <div id="table-editor-container" class="overflow-x-auto hidden border rounded-xl">
+                        <!-- Table injected via JS -->
+                    </div>
+                    
+                    <div id="table-actions" class="mt-6 flex justify-between hidden">
+                        <button onclick="addRowToEditor()" class="px-6 py-3 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-700 transition"><i class="fas fa-plus mr-2"></i> Tambah Baris Baru</button>
+                        <button onclick="saveTableData()" id="btnSaveTable" class="px-8 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg transition">Simpan Tabel <i class="fas fa-save ml-2"></i></button>
+                    </div>
+                    
+                    <div id="table-empty-state" class="text-center py-12 text-slate-400">
+                        <i class="fas fa-table text-5xl mb-4 opacity-50 text-brand-300"></i>
+                        <p class="font-medium text-slate-500">Pilih tabel di atas untuk mulai mengedit data secara langsung.</p>
+                    </div>
+                </div>
+
+                <!-- TAB 3: Security Settings -->
+                <div id="tab-security" class="bg-white p-8 rounded-3xl shadow-xl border border-brand-100 hidden">
+                    <h3 class="text-xl font-black text-slate-900 mb-6 border-b pb-4"><i class="fas fa-shield-alt text-brand-500 mr-2"></i> Keamanan Akun Administrator</h3>
+                    <div class="max-w-md space-y-4">
+                        <p class="text-sm text-slate-500 mb-4">Ubah username dan password untuk login ke portal Admin CMS.</p>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Username Baru</label>
+                            <input type="text" id="sec_newUser" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:ring-2 focus:ring-brand-400 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Password Baru</label>
+                            <input type="password" id="sec_newPass" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 font-medium focus:ring-2 focus:ring-brand-400 outline-none">
+                        </div>
+                        <button onclick="updateSecurity()" id="btnSaveSecurity" class="mt-4 px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl shadow-lg w-full transition">
+                            Perbarui Kredensial <i class="fas fa-lock ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <button id="btn-back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="fixed bottom-6 right-6 w-14 h-14 bg-slate-900 text-white rounded-full shadow-2xl flex items-center justify-center opacity-0 transform translate-y-10 transition-all duration-300 z-50 hover:bg-brand-500 hover:-translate-y-2"><i class="fas fa-chevron-up text-xl"></i></button>
+
+    </div>
+
+    <script>
+        // --- GLOBAL STATE ---
+        let siteData = {}; 
+        let currentTableData = [];
+        let currentTableName = '';
+
+        const dummyData = {
+            settings: {
+                heroTitle: "Hello, I'm Satria!<br><span class='bg-clip-text text-transparent bg-gradient-to-r from-brand-500 to-cyan-400'>Teaching Enthusiast | Social & HR Passionate | Creative Digital Talent</span>",
+                heroDesc: "Membangun ide menjadi pengalaman digital yang memukau. Saya siap membantu Anda menciptakan dampak positif melalui inovasi, desain, dan komunikasi.",
+                heroImg: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80",
+                aboutDesc: "Saya adalah seorang profesional muda yang memiliki passion kuat di bidang <strong>Teknologi, Desain, dan Komunikasi</strong>.<br><br>Dengan pengalaman dalam kepemimpinan tim dan manajemen proyek, saya siap memberikan nilai tambah.",
+                aboutImg: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
+                aboutQuote: `"Kolaborasi adalah kunci dari setiap kesuksesan digital."`,
+                faviconUrl: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+                waNumber: "6281234567890",
+                email: "hello@satriamunggaran.com",
+                linkedin: "https://linkedin.com/",
+                instagram: "https://instagram.com/",
+                youtube: "https://youtube.com/"
+            },
+            Stats: [ ['Angka', 'Label', 'Warna'], ['15+', 'Projects', 'brand'], ['3+', 'Tahun Org.', 'cyan'], ['10+', 'Sertifikat', 'pink'], ['100%', 'Dedikasi', 'amber'] ],
+            Education: [ ['School', 'Degree', 'Year', 'Desc', 'Image'], ['Univ Indonesia', 'S1 Ilmu Komputer', '2022 - 2026', 'Fokus UI/UX', 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=600&q=80'] ],
+            Experience: [ ['Year', 'Role', 'Company', 'Desc', 'Achievements', 'Skills', 'Image'], ['2025', 'Intern', 'TechNova', 'Redesign UI', 'Engagement 40%', 'Figma', 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=80'] ],
+            Skills: [ ['Name', 'Category', 'Desc', 'Image'], ['UI/UX', 'Hard Skill', 'Figma', 'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=600&q=80'] ],
+            Projects: [ ['Category', 'Title', 'Tools', 'Desc', 'Image', 'Link'], ['web', 'EduDigital', 'HTML', 'Sistem LMS', 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80', 'https://github.com'] ],
+            Certificates: [ ['Title', 'Issuer', 'Image'], ['UX Design', 'Coursera', 'https://images.unsplash.com/photo-1589330694653-efa6475304af?auto=format&fit=crop&w=400&q=80'] ],
+            Gallery: [ ['Image', 'Caption'], ['https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=600&q=80', 'Seminar Digital Nasional'], ['https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=600&q=80', 'Tech Bootcamp 2025'] ],
+            Testimonials: [ ['Name', 'Role', 'Text', 'Avatar'], ['Budi', 'CEO', 'Sangat baik', 'https://randomuser.me/api/portraits/men/32.jpg'] ]
+        };
+
+        // --- FETCH WRAPPER ---
+        function callGAS(action, params = {}) {
+            return new Promise((resolve, reject) => {
+                if (typeof google !== 'undefined' && google.script && google.script.run) {
+                    if (action === 'getAllData') google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).getAllData();
+                    else if (action === 'verifyLogin') google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).verifyLogin(params.u, params.p);
+                    else if (action === 'saveSettings') google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).saveSettings(params.data);
+                    else if (action === 'saveTable') google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).saveTable(params.tableName, params.data);
+                    else if (action === 'updateCredentials') google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).updateCredentials(params.newU, params.newP);
+                } else {
+                    if (!GAS_URL || GAS_URL.includes("URL_DEPLOY_GAS_ANDA_DISINI")) {
+                        reject(new Error("URL GAS_URL belum diisi.")); return;
+                    }
+                    if (action === 'getAllData') {
+                        fetch(GAS_URL + "?action=getAllData").then(res => res.json()).then(resolve).catch(reject);
+                    } else {
+                        fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: action, ...params }) })
+                        .then(res => res.json()).then(resolve).catch(reject);
+                    }
+                }
+            });
+        }
+
+        // --- ANTI LOADING INSTAN (SMART CACHE) & BACKGROUND FETCH ---
+        const CACHE_KEY = "satria_portfolio_cache_v1";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (IS_PREVIEW) {
+                siteData = dummyData;
+                processRender();
+                showApp();
+            } else {
+                // 1. TAMPILKAN LANGSUNG DARI CACHE (0 Detik Jeda)
+                const cachedData = localStorage.getItem(CACHE_KEY);
+                if (cachedData) {
+                    try {
+                        siteData = JSON.parse(cachedData);
+                        processRender();
+                        showApp();
+                    } catch(e) { console.log("Cache error", e); }
+                }
+
+                // 2. AMBIL DATA BARU DI LATAR BELAKANG
+                callGAS('getAllData')
+                    .then(data => {
+                        if(data && data.settings) {
+                            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+                            siteData = data;
+                            processRender(); // Render ulang jika ada perubahan di background
+                            if (!cachedData) showApp(); // Tampilkan jika buka pertama kali di device baru
+                        }
+                    })
+                    .catch(err => {
+                        console.log("Background fetch failed.", err);
+                        if (!cachedData) { // Jika gagal dan belum pernah buka sama sekali
+                            siteData = dummyData; 
+                            processRender();
+                            showApp();
+                        }
+                    });
+            }
+        });
+
+        function showApp() {
+            document.getElementById('app-container').classList.remove('opacity-0');
+            // setupScrollAnimations() dihapus dari sini dan dipindahkan ke processRender
+            setupNavbarScroll();
+        }
+
+        function processRender() {
+            renderProfileTexts(); renderStats(); renderEducation(); renderExperience();
+            renderSkills(); renderProjects('all'); renderCertificates(); renderGallery(); renderTestimonials();
+            populateAdminForm();
+            
+            // PERBAIKAN: Memastikan elemen baru yang di-render langsung dipantau oleh animasi scroll
+            setTimeout(() => {
+                setupScrollAnimations();
+                setupSkillsAutoScroll(); // Memanggil fungsi auto-scroll untuk Skills
+            }, 50);
+        }
+
+        // --- RENDERERS ---
+        function renderProfileTexts() {
+            const s = siteData.settings;
+            document.getElementById('hero-title').innerHTML = s.heroTitle;
+            document.getElementById('hero-desc').innerHTML = s.heroDesc;
+            document.getElementById('hero-img').src = s.heroImg;
+            document.getElementById('about-desc').innerHTML = s.aboutDesc;
+            
+            if(document.getElementById('about-img')) document.getElementById('about-img').src = s.aboutImg || "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80";
+            if(document.getElementById('about-quote')) document.getElementById('about-quote').innerHTML = s.aboutQuote || `"Kolaborasi adalah kunci dari setiap kesuksesan digital."`;
+            
+            // Set Favicon
+            const fav = document.getElementById('app-favicon');
+            if(fav) fav.href = s.faviconUrl || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+
+            document.getElementById('c-email-disp').innerText = s.email;
+            document.getElementById('c-wa-disp').innerText = "+" + s.waNumber;
+            document.getElementById('link-linkedin').href = s.linkedin;
+            document.getElementById('link-instagram').href = s.instagram;
+            document.getElementById('link-youtube').href = s.youtube;
+        }
+
+        function renderStats() {
+            const data = siteData.Stats; if(!data || data.length < 2) return; let html = '';
+            for(let i=1; i<data.length; i++) {
+                const [val, label, color] = data[i];
+                html += `<div class="bg-${color}-50 p-5 rounded-2xl text-center border border-${color}-100 hover:shadow-lg transition"><h4 class="text-3xl font-black text-${color}-600 mb-1">${val}</h4><p class="text-xs text-slate-600 uppercase font-bold">${label}</p></div>`;
+            }
+            document.getElementById('stats-container').innerHTML = html;
+        }
+
+        function renderEducation() {
+            const data = siteData.Education; if(!data || data.length < 2) return; let html = '';
+            for(let i=1; i<data.length; i++) {
+                const [school, degree, year, desc, img] = data[i];
+                html += `<div class="bg-white rounded-[2rem] p-6 lg:p-8 shadow-xl border border-brand-100 flex flex-col md:flex-row gap-8 items-center animate-on-scroll group" style="transition-delay: ${i*100}ms"><div class="w-full md:w-1/3 rounded-2xl overflow-hidden shadow-md"><img src="${img}" class="w-full h-48 object-cover img-hover-zoom"></div><div class="w-full md:w-2/3"><span class="inline-block px-4 py-1 bg-brand-100 text-brand-600 font-black text-xs rounded-full mb-3 shadow-sm border border-brand-200">${year}</span><h4 class="text-2xl font-black text-slate-900 mb-1">${school}</h4><p class="text-cyan-600 font-bold text-lg mb-4">${degree}</p><p class="text-slate-700 font-medium leading-relaxed">${desc}</p></div></div>`;
+            }
+            document.getElementById('education-container').innerHTML = html;
+        }
+
+        function renderExperience() {
+            const data = siteData.Experience; if(!data || data.length < 2) return; let html = '';
+            
+            // Helper cerdas untuk memisahkan teks berdasarkan ENTER (baris baru) atau KOMA
+            const parseList = (str) => {
+                if(!str) return [];
+                let arr = String(str).split('\n').map(s => s.trim()).filter(s => s);
+                if(arr.length <= 1 && String(str).includes(',')) arr = String(str).split(',').map(s => s.trim()).filter(s => s);
+                return arr;
+            };
+
+            for(let i=1; i<data.length; i++) {
+                const [year, role, company, desc, achievementsStr, skillsStr, img] = data[i];
+                const achievements = parseList(achievementsStr); 
+                const skills = parseList(skillsStr);
+
+                // PERBAIKAN KARTU PENGALAMAN: Lebar dibuat fix untuk scroll (w-85vw md:w-600px), fallback jika image error (onerror), tinggi card konsisten.
+                html += `<div class="w-[85vw] md:w-[600px] shrink-0 snap-center bg-white rounded-[2rem] shadow-xl border border-brand-100 overflow-hidden group animate-on-scroll flex flex-col" style="transition-delay: ${i*100}ms">
+                    <div class="h-48 md:h-64 overflow-hidden relative shrink-0">
+                        <img src="${img}" onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80'" class="w-full h-full object-cover img-hover-zoom">
+                        <div class="absolute bottom-4 left-4"><span class="px-4 py-1.5 bg-white/90 backdrop-blur text-brand-700 font-black text-xs rounded-full shadow-lg border border-brand-100">${year}</span></div>
+                    </div>
+                    <div class="p-6 md:p-8 flex-1 flex flex-col">
+                        <h4 class="text-2xl font-black text-slate-900 mb-1">${role}</h4>
+                        <p class="text-cyan-600 font-bold mb-4"><i class="fas fa-building mr-2"></i>${company}</p>
+                        <p class="text-slate-700 mb-6 font-medium">${desc}</p>
+                        <div class="mb-6 bg-brand-50 p-4 rounded-xl border border-brand-100 flex-1">
+                            <p class="text-xs font-bold text-brand-600 uppercase tracking-wider mb-3">Pencapaian Kunci:</p>
+                            <ul class="space-y-2">
+                                ${achievements.map(ach => `<li class="flex items-start gap-2 text-sm text-slate-800 font-medium"><i class="fas fa-check-circle text-brand-500 mt-0.5 shrink-0"></i> <span>${ach}</span></li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                            ${skills.map(s => `<span class="px-3 py-1 bg-white border border-brand-200 text-brand-600 font-bold text-xs rounded-lg shadow-sm">${s}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>`;
+            }
+            document.getElementById('experience-container').innerHTML = html;
+        }
+
+        function renderSkills() {
+            const data = siteData.Skills; if(!data || data.length < 2) return; let html = '';
+            for(let i=1; i<data.length; i++) {
+                const [name, cat, desc, img] = data[i];
+                // PERBAIKAN SKILLS: Lebar statis (w-[85vw] md:w-[350px]), onerror fallback gambar, dan teks p (deskripsi) diubah jadi selalu tampil
+                html += `<div class="w-[85vw] md:w-[350px] shrink-0 group relative rounded-[2rem] overflow-hidden shadow-xl animate-on-scroll h-72 border border-slate-700" style="transition-delay: ${i*50}ms">
+                    <img src="${img}" onerror="this.src='https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80'" class="w-full h-full object-cover img-hover-zoom">
+                    <div class="absolute inset-0 bg-slate-900/70 transition-opacity group-hover:bg-slate-900/90"></div>
+                    <div class="absolute inset-0 p-8 flex flex-col justify-end">
+                        <span class="inline-block w-max px-3 py-1 bg-cyan-500/20 text-cyan-300 font-bold text-xs rounded-full mb-3 border border-cyan-500/30">${cat}</span>
+                        <h4 class="text-2xl font-black text-white mb-2 transform transition-transform group-hover:-translate-y-1">${name}</h4>
+                        <p class="text-slate-200 text-sm font-medium line-clamp-3">${desc}</p>
+                    </div>
+                </div>`;
+            }
+            document.getElementById('skills-container').innerHTML = html;
+        }
+
+        // --- SKILLS AUTO-SCROLL LOGIC ---
+        let skillsScrollTimer;
+        function setupSkillsAutoScroll() {
+            const container = document.getElementById('skills-container');
+            if(!container) return;
+            
+            let isHovered = false;
+            // Deteksi jika user menahan kursor / menyentuh layar
+            container.addEventListener('mouseenter', () => isHovered = true);
+            container.addEventListener('mouseleave', () => isHovered = false);
+            container.addEventListener('touchstart', () => isHovered = true);
+            container.addEventListener('touchend', () => setTimeout(() => isHovered = false, 1500));
+
+            clearInterval(skillsScrollTimer);
+            skillsScrollTimer = setInterval(() => {
+                if(!isHovered) {
+                    container.scrollLeft += 1; // Kecepatan geser 1 pixel per tick
+                    // Jika sudah sampai mentok paling kanan, ulangi dari awal
+                    if(Math.ceil(container.scrollLeft) >= container.scrollWidth - container.clientWidth) {
+                        container.scrollLeft = 0; 
+                    }
+                }
+            }, 20); // Dijalankan tiap 20ms agar efeknya super smooth
+        }
+
+        function renderProjects(filterType) {
+            const data = siteData.Projects; if(!data || data.length < 2) return; let html = '';
+            
+            // Helper cerdas yang sama untuk project tools
+            const parseList = (str) => {
+                if(!str) return [];
+                let arr = String(str).split('\n').map(s => s.trim()).filter(s => s);
+                if(arr.length <= 1 && String(str).includes(',')) arr = String(str).split(',').map(s => s.trim()).filter(s => s);
+                return arr;
+            };
+
+            for(let i=1; i<data.length; i++) {
+                const [cat, title, toolsStr, desc, img, link] = data[i];
+                if(filterType !== 'all' && cat !== filterType) continue;
+                const tools = parseList(toolsStr);
+                const targetLink = link ? link : '#';
+                html += `<div class="bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 group animate-on-scroll border border-brand-100"><div class="relative h-56 overflow-hidden"><img src="${img}" class="w-full h-full object-cover img-hover-zoom"><div class="absolute inset-0 bg-gradient-to-t from-brand-900/90 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 flex items-center justify-center"><a href="${targetLink}" target="_blank" class="px-6 py-3 bg-white text-brand-600 rounded-full text-sm font-bold transform translate-y-10 group-hover:translate-y-0 transition duration-500 shadow-xl flex items-center gap-2 hover:bg-brand-50"><i class="fas fa-external-link-alt"></i> Kunjungi</a></div></div><div class="p-8 text-center"><p class="text-xs font-bold text-brand-500 uppercase tracking-widest mb-2">${cat}</p><h4 class="text-xl font-black text-slate-900 mb-3">${title}</h4><p class="text-sm text-slate-600 font-medium mb-6">${desc}</p><div class="flex flex-wrap justify-center gap-2">${tools.map(t => `<span class="px-3 py-1 bg-brand-50 border border-brand-200 text-brand-600 font-bold text-xs rounded-lg">${t}</span>`).join('')}</div></div></div>`;
+            }
+            document.getElementById('projects-container').innerHTML = html;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if(btn.dataset.filter === filterType) { btn.classList.add('bg-brand-500', 'text-white', 'shadow-brand-500/30'); btn.classList.remove('bg-white', 'text-slate-700', 'shadow-sm'); } 
+                else { btn.classList.remove('bg-brand-500', 'text-white', 'shadow-brand-500/30'); btn.classList.add('bg-white', 'text-slate-700', 'shadow-sm'); }
+            });
+        }
+        document.querySelectorAll('.filter-btn').forEach(btn => { btn.addEventListener('click', (e) => { renderProjects(e.target.dataset.filter); setTimeout(() => document.querySelectorAll('#projects-container .animate-on-scroll').forEach(el => el.classList.add('is-visible')), 50); }); });
+
+        function renderCertificates() {
+            const data = siteData.Certificates; if(!data || data.length < 2) return; let html = '';
+            for(let i=1; i<data.length; i++) {
+                const [title, issuer, img] = data[i];
+                html += `<div class="bg-white rounded-2xl shadow-xl border border-brand-100 overflow-hidden group animate-on-scroll" style="transition-delay: ${i*100}ms"><div class="h-48 overflow-hidden relative border-b border-brand-50"><img src="${img}" class="w-full h-full object-cover img-hover-zoom filter brightness-95 group-hover:brightness-100"><div class="absolute top-4 right-4 w-10 h-10 bg-brand-500 text-white rounded-full flex items-center justify-center shadow-lg"><i class="fas fa-award"></i></div></div><div class="p-6 text-center"><h4 class="font-black text-slate-900 leading-tight mb-2 text-lg">${title}</h4><p class="text-sm font-bold text-cyan-600">${issuer}</p></div></div>`;
+            }
+            document.getElementById('certificates-container').innerHTML = html;
+        }
+        
+        function renderGallery() {
+            const data = siteData.Gallery; if(!data || data.length < 2) { document.getElementById('gallery').style.display = 'none'; return; }
+            document.getElementById('gallery').style.display = 'block';
+            let html = '';
+            for(let i=1; i<data.length; i++) {
+                const [img, caption] = data[i];
+                html += `<div class="relative group rounded-2xl overflow-hidden shadow-md border border-brand-100 animate-on-scroll h-48 md:h-64"><img src="${img}" class="w-full h-full object-cover img-hover-zoom filter brightness-95 group-hover:brightness-100"><div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-5"><p class="text-white font-bold text-sm tracking-wide shadow-sm">${caption}</p></div></div>`;
+            }
+            document.getElementById('gallery-container').innerHTML = html;
+        }
+
+        function renderTestimonials() {
+            const data = siteData.Testimonials; if(!data || data.length < 2) return; let html = '';
+            for(let i=1; i<data.length; i++) {
+                const [name, role, text, avatar] = data[i];
+                html += `<div class="bg-white p-8 rounded-[2rem] shadow-xl relative animate-on-scroll text-left" style="transition-delay: ${i*150}ms"><div class="absolute -top-5 right-8 w-12 h-12 bg-cyan-400 rounded-full flex items-center justify-center text-white shadow-lg text-xl"><i class="fas fa-quote-right"></i></div><div class="flex items-center gap-4 mb-6"><img src="${avatar}" class="w-16 h-16 rounded-full border-4 border-brand-100 object-cover shadow-sm"><div><h5 class="font-black text-slate-900 text-lg">${name}</h5><p class="text-sm font-bold text-brand-500">${role}</p></div></div><p class="text-slate-700 font-medium leading-relaxed">"${text}"</p><div class="mt-6 flex text-amber-400 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div></div>`;
+            }
+            document.getElementById('testimonials-container').innerHTML = html;
+        }
+
+        // --- WHATSAPP CONTACT LOGIC ---
+        function handleWAContact(e) {
+            e.preventDefault();
+            const name = document.getElementById('wa_name').value; 
+            const message = document.getElementById('wa_message').value;
+            let waRaw = siteData.settings.waNumber || "6281234567890";
+            
+            // Perbaikan: Konversi paksa ke String agar tidak error saat memproses angka dari Google Sheets
+            let wa = String(waRaw).replace(/\D/g,''); 
+            if(wa.startsWith('0')) wa = '62' + wa.substring(1);
+            
+            const waUrl = `https://wa.me/${wa}?text=${encodeURIComponent(`Halo, saya ${name}.\n\nIngin berdiskusi mengenai: \n${message}`)}`;
+            
+            // Membuka tab WhatsApp baru
+            window.open(waUrl, '_blank');
+            
+            document.getElementById('waForm').reset();
+            showNotification('Mengarahkan ke WhatsApp...', 'success');
+        }
+
+        // --- ADMIN CMS LOGIC ---
+        function switchAdminTab(tabId) {
+            ['tab-profile', 'tab-database', 'tab-security'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.add('hidden');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+            ['btn-tab-profile', 'btn-tab-database', 'btn-tab-security'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.className = "px-6 py-3 bg-white text-slate-700 font-bold rounded-xl shadow-sm border border-brand-100 hover:bg-brand-50 transition";
+            });
+            document.getElementById('btn-' + tabId).className = "px-6 py-3 bg-brand-500 text-white font-bold rounded-xl shadow-md transition";
+        }
+
+        function populateAdminForm() {
+            const s = siteData.settings;
+            document.getElementById('set_heroTitle').value = s.heroTitle || ''; document.getElementById('set_heroDesc').value = s.heroDesc || '';
+            document.getElementById('set_heroImg').value = s.heroImg || ''; document.getElementById('set_aboutDesc').value = s.aboutDesc || '';
+            document.getElementById('set_aboutImg').value = s.aboutImg || ''; document.getElementById('set_aboutQuote').value = s.aboutQuote || '';
+            document.getElementById('set_faviconUrl').value = s.faviconUrl || '';
+            document.getElementById('set_waNumber').value = s.waNumber || ''; document.getElementById('set_email').value = s.email || '';
+            document.getElementById('set_linkedin').value = s.linkedin || ''; document.getElementById('set_instagram').value = s.instagram || ''; document.getElementById('set_youtube').value = s.youtube || '';
+        }
+
+        function saveProfileSettings() {
+            const btn = document.getElementById('btnSaveProfile');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan...'; btn.disabled = true;
+
+            const newSettings = {
+                heroTitle: document.getElementById('set_heroTitle').value, heroDesc: document.getElementById('set_heroDesc').value,
+                heroImg: document.getElementById('set_heroImg').value, aboutDesc: document.getElementById('set_aboutDesc').value,
+                aboutImg: document.getElementById('set_aboutImg').value, aboutQuote: document.getElementById('set_aboutQuote').value,
+                faviconUrl: document.getElementById('set_faviconUrl').value,
+                waNumber: document.getElementById('set_waNumber').value, email: document.getElementById('set_email').value,
+                linkedin: document.getElementById('set_linkedin').value, instagram: document.getElementById('set_instagram').value, youtube: document.getElementById('set_youtube').value
+            };
+
+            if (IS_PREVIEW) {
+                setTimeout(() => { 
+                    siteData.settings = newSettings; 
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(siteData)); // Perbaikan Cache: Langsung Paksa Simpan Lokal
+                    renderProfileTexts(); 
+                    showNotification('Profil berhasil disimpan! (Mode Preview)', 'success'); 
+                    btn.innerHTML = 'Simpan Perubahan Profil <i class="fas fa-save ml-2"></i>'; 
+                    btn.disabled = false; 
+                }, 1000);
+            } else {
+                callGAS('saveSettings', { data: newSettings })
+                    .then(res => { 
+                        siteData.settings = newSettings; 
+                        localStorage.setItem(CACHE_KEY, JSON.stringify(siteData)); // Perbaikan Cache: Langsung Paksa Simpan Lokal
+                        renderProfileTexts(); 
+                        showNotification('Profil disimpan ke Database!', 'success'); 
+                    })
+                    .catch(() => showNotification('Gagal menyimpan profil', 'error'))
+                    .finally(() => { btn.innerHTML = 'Simpan Perubahan Profil <i class="fas fa-save ml-2"></i>'; btn.disabled = false; });
+            }
+        }
+
+        function loadTableEditor() {
+            const tableName = document.getElementById('db-selector').value;
+            const container = document.getElementById('table-editor-container'); const actions = document.getElementById('table-actions'); const empty = document.getElementById('table-empty-state');
+            if(!tableName) { container.classList.add('hidden'); actions.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+            currentTableName = tableName; currentTableData = JSON.parse(JSON.stringify(siteData[tableName] || []));
+            if(currentTableData.length === 0) { showNotification('Tabel kosong.', 'error'); return; }
+            renderTableUI(); empty.classList.add('hidden'); container.classList.remove('hidden'); actions.classList.remove('hidden');
+        }
+
+        function renderTableUI() {
+            let html = '<table class="w-full text-left border-collapse text-sm min-w-[800px]"><thead><tr class="bg-brand-50 border-b border-brand-100"><th class="p-3 font-bold w-12 text-center text-brand-700">No</th>';
+            currentTableData[0].forEach(h => html += `<th class="p-3 border-l border-brand-100 font-bold text-brand-700">${h}</th>`);
+            html += '<th class="p-3 border-l border-brand-100 font-bold w-16 text-center text-brand-700">Aksi</th></tr></thead><tbody class="bg-white">';
+            for(let i=1; i<currentTableData.length; i++) {
+                html += `<tr class="border-b border-slate-100 hover:bg-slate-50"><td class="p-3 text-center font-bold text-slate-400">${i}</td>`;
+                currentTableData[i].forEach((cell, colIndex) => { html += `<td class="p-2 border-l border-slate-100"><textarea onchange="updateCell(${i}, ${colIndex}, this.value)" class="w-full p-2 border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-brand-400 outline-none resize-y min-h-[40px] font-medium text-slate-700">${cell}</textarea></td>`; });
+                html += `<td class="p-3 border-l border-slate-100 text-center"><button onclick="deleteRow(${i})" class="w-8 h-8 rounded bg-red-50 text-red-600 hover:bg-red-500 hover:text-white transition shadow-sm border border-red-100"><i class="fas fa-trash"></i></button></td></tr>`;
+            }
+            html += '</tbody></table>'; document.getElementById('table-editor-container').innerHTML = html;
+        }
+
+        function updateCell(r, c, val) { currentTableData[r][c] = val; }
+        function deleteRow(index) { if(confirm('Hapus baris ini?')) { currentTableData.splice(index, 1); renderTableUI(); } }
+        function addRowToEditor() { currentTableData.push(new Array(currentTableData[0].length).fill("")); renderTableUI(); document.getElementById('table-editor-container').scrollLeft = 0; }
+
+        function saveTableData() {
+            const btn = document.getElementById('btnSaveTable'); btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan...'; btn.disabled = true;
+            if (IS_PREVIEW) {
+                setTimeout(() => { siteData[currentTableName] = currentTableData; processRender(); showNotification('Tabel disimpan! (Mode Preview)', 'success'); btn.innerHTML = 'Simpan Tabel <i class="fas fa-save ml-2"></i>'; btn.disabled = false; }, 1000);
+            } else {
+                callGAS('saveTable', { tableName: currentTableName, data: currentTableData })
+                    .then(() => { siteData[currentTableName] = currentTableData; processRender(); showNotification('Tabel diupdate di Spreadsheet!', 'success'); })
+                    .catch(() => showNotification('Gagal menyimpan ke database.', 'error'))
+                    .finally(() => { btn.innerHTML = 'Simpan Tabel <i class="fas fa-save ml-2"></i>'; btn.disabled = false; });
+            }
+        }
+
+        function updateSecurity() {
+            const newU = document.getElementById('sec_newUser').value;
+            const newP = document.getElementById('sec_newPass').value;
+            if(!newU || !newP) { showNotification('Isi Username dan Password baru!', 'error'); return; }
+
+            const btn = document.getElementById('btnSaveSecurity');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Memperbarui...'; btn.disabled = true;
+
+            if(IS_PREVIEW) {
+                setTimeout(() => {
+                    showNotification('Kredensial diubah (Mode Preview)', 'success');
+                    document.getElementById('sec_newUser').value = ''; document.getElementById('sec_newPass').value = '';
+                    btn.innerHTML = 'Perbarui Kredensial <i class="fas fa-lock ml-2"></i>'; btn.disabled = false;
+                }, 1000);
+            } else {
+                callGAS('updateCredentials', { newU: newU, newP: newP })
+                    .then(res => {
+                        if(res.success) {
+                            showNotification(res.message, 'success');
+                            document.getElementById('sec_newUser').value = ''; document.getElementById('sec_newPass').value = '';
+                        } else { showNotification(res.message, 'error'); }
+                    })
+                    .catch(() => showNotification('Gagal menghubungi server', 'error'))
+                    .finally(() => { btn.innerHTML = 'Perbarui Kredensial <i class="fas fa-lock ml-2"></i>'; btn.disabled = false; });
+            }
+        }
+
+        // --- UI LOGIC ---
+        function navigate(view) {
+            ['view-portfolio', 'view-login', 'view-admin'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            const nav = document.getElementById('navbar');
+            if(view === 'home') { document.getElementById('view-portfolio').classList.remove('hidden'); nav.classList.remove('hidden'); } 
+            else if (view === 'login') { document.getElementById('view-login').classList.remove('hidden'); nav.classList.add('hidden'); } 
+            else if (view === 'admin') { document.getElementById('view-admin').classList.remove('hidden'); nav.classList.add('hidden'); }
+            window.scrollTo(0,0);
+        }
+
+        function showLogin() { navigate('login'); document.getElementById('mobile-menu').classList.add('hidden'); }
+
+        function handleLogin(e) {
+            e.preventDefault(); const btn = document.getElementById('btnLogin'); const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Memeriksa...'; btn.disabled = true;
+            const u = document.getElementById('l_user').value; const p = document.getElementById('l_pass').value;
+
+            if (IS_PREVIEW) {
+                setTimeout(() => { if (u === 'admin' && p === 'edudigital') { showNotification('Akses Admin', 'success'); navigate('admin'); } else { showNotification('Ditolak!', 'error'); } btn.innerHTML = originalText; btn.disabled = false; }, 1000);
+            } else {
+                callGAS('verifyLogin', { u: u, p: p })
+                    .then(res => { if(res.success && res.role === 'Admin') { showNotification('Akses Admin', 'success'); navigate('admin'); } else { showNotification(res.message || 'Ditolak', 'error'); } })
+                    .catch(() => showNotification('Gagal terhubung server', 'error')).finally(() => { btn.innerHTML = originalText; btn.disabled = false; });
+            }
+        }
+
+        function handleLogout() { document.getElementById('loginForm').reset(); showNotification('Logout', 'success'); navigate('home'); }
+
+        function setupScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); } }); }, { threshold: 0.1 });
+            document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+        }
+
+        function setupNavbarScroll() {
+            const nav = document.getElementById('navbar'); const btnTop = document.getElementById('btn-back-to-top');
+            window.addEventListener('scroll', () => { if (window.scrollY > 50) { nav.classList.add('shadow-md', 'bg-white/95'); btnTop.classList.remove('opacity-0', 'translate-y-10'); } else { nav.classList.remove('shadow-md', 'bg-white/95'); btnTop.classList.add('opacity-0', 'translate-y-10'); } });
+        }
+
+        function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('hidden'); }
+        document.querySelectorAll('#mobile-menu a').forEach(link => { link.addEventListener('click', () => { document.getElementById('mobile-menu').classList.add('hidden'); }); });
+
+        function showNotification(msg, type = 'success') {
+            const toast = document.createElement('div'); const bgColor = type === 'success' ? 'bg-emerald-500' : 'bg-red-500'; const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            toast.className = `fixed bottom-6 right-6 ${bgColor} text-white px-6 py-4 rounded-xl shadow-2xl transform transition-all duration-500 translate-y-20 opacity-0 z-[9999999] flex items-center gap-3 font-bold`;
+            toast.innerHTML = `<i class="fas ${icon} text-xl"></i> <span>${msg}</span>`; document.body.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-20', 'opacity-0'), 50);
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); setTimeout(() => toast.remove(), 500); }, 4000);
+        }
+
+        // --- SCROLL HORIZONTAL LOGIC ---
+        function scrollDiv(id, direction) {
+            const container = document.getElementById(id);
+            // Menggeser kartu secara presisi sebesar 1 ukuran kartu
+            const scrollAmount = 632; 
+            container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
